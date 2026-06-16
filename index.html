@@ -3,48 +3,98 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Name</title>
+  <title>Football Scout — Search</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-  <header>
-    <nav>
-      <span class="nav__logo">Project Name</span>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="nav__logo">⚽ Football Scout</a>
       <div class="nav__links">
-        <a href="index.html">Search</a>
-        <a href="saved.html">Saved</a>
+        <a href="index.html" class="nav__link nav__link--active">Search</a>
+        <a href="saved.html" class="nav__link">Favourites</a>
+        <a href="login.html" class="nav__link">Profile</a>
       </div>
-      <div class="nav__actions">
-        <span id="nav-user"></span>
-        <button id="logout-btn" type="button">Logout</button>
-      </div>
+      <button class="nav__hamburger" id="hamburger-btn" aria-label="Toggle menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
   </header>
 
-  <main>
+  <main class="main">
+    <section class="hero">
+      <h1 class="hero__title">Explore Football Teams</h1>
+      <p class="hero__subtitle">Search leagues, discover teams, and save your favourites</p>
+    </section>
 
-    <!-- search / filter form -->
-    <section>
-      <form id="search-form">
-        <!-- add your inputs here (at least 3 different types) -->
-        <button type="submit">Search</button>
+    <section class="search-section">
+      <form id="search-form" class="search-form" novalidate>
+        <div class="search-form__row">
+          <div class="search-form__field">
+            <label for="search-input" class="search-form__label">Team or League Name</label>
+            <input
+              type="text"
+              id="search-input"
+              name="query"
+              class="search-form__input"
+              placeholder="e.g. Arsenal, La Liga…"
+              minlength="2"
+              required
+            >
+          </div>
+
+          <div class="search-form__field">
+            <label for="country-select" class="search-form__label">Country</label>
+            <select id="country-select" name="country" class="search-form__select">
+              <option value="">All Countries</option>
+              <option value="England">England</option>
+              <option value="Spain">Spain</option>
+              <option value="Germany">Germany</option>
+              <option value="Italy">Italy</option>
+              <option value="France">France</option>
+              <option value="Netherlands">Netherlands</option>
+              <option value="Portugal">Portugal</option>
+              <option value="USA">USA</option>
+              <option value="Brazil">Brazil</option>
+              <option value="Argentina">Argentina</option>
+            </select>
+          </div>
+
+          <div class="search-form__field">
+            <label for="sport-radio" class="search-form__label">Type</label>
+            <div class="search-form__radios" id="sport-radio">
+              <label class="radio-label">
+                <input type="radio" name="search-type" value="teams" checked> Teams
+              </label>
+              <label class="radio-label">
+                <input type="radio" name="search-type" value="leagues"> Leagues
+              </label>
+            </div>
+          </div>
+        </div>
+
+        <div class="search-form__actions">
+          <button type="submit" class="btn btn--primary">Search</button>
+          <button type="reset" class="btn btn--ghost" id="clear-btn">Clear</button>
+        </div>
+        <p class="search-form__error" id="form-error" hidden>Please enter at least 2 characters.</p>
       </form>
     </section>
 
-    <!-- loading and error states -->
-    <p id="loading-msg" hidden>Loading…</p>
-    <p id="error-msg" hidden></p>
+    <p id="loading-msg" class="status-msg status-msg--loading" hidden>
+      <span class="spinner"></span> Loading results…
+    </p>
+    <p id="error-msg" class="status-msg status-msg--error" hidden></p>
+    <p id="empty-msg" class="status-msg" hidden>No results found. Try a different search.</p>
 
-    <!-- dynamically generated cards land here -->
-    <section>
-      <div id="results-grid"></div>
+    <section class="results-section" id="results-section" hidden>
+      <h2 class="results-section__title" id="results-title"></h2>
+      <div class="card-grid" id="results-grid"></div>
     </section>
-
   </main>
 
-  <footer>
-    <!-- footer content -->
+  <footer class="footer">
+    <p class="footer__text">⚽ Football Scout · Data from <a href="https://www.thesportsdb.com/" target="_blank" rel="noopener">TheSportsDB</a></p>
   </footer>
 
   <script type="module" src="js/main.js"></script>

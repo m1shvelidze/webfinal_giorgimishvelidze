@@ -3,37 +3,53 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Saved — Project Name</title>
+  <title>Football Scout — Favourites</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
-
-  <header>
-    <nav>
-      <span class="nav__logo">Project Name</span>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="nav__logo">⚽ Football Scout</a>
       <div class="nav__links">
-        <a href="index.html">Search</a>
-        <a href="saved.html">Saved</a>
+        <a href="index.html" class="nav__link">Search</a>
+        <a href="saved.html" class="nav__link nav__link--active">Favourites</a>
+        <a href="login.html" class="nav__link">Profile</a>
       </div>
-      <div class="nav__actions">
-        <span id="nav-user"></span>
-        <button id="logout-btn" type="button">Logout</button>
-      </div>
+      <button class="nav__hamburger" id="hamburger-btn" aria-label="Toggle menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
     </nav>
   </header>
 
-  <main>
-
-    <section>
-      <h2>Saved Items</h2>
-      <p id="saved-empty" hidden>Nothing saved yet.</p>
-      <div id="saved-grid"></div>
+  <main class="main">
+    <section class="hero">
+      <h1 class="hero__title">Your Favourites</h1>
+      <p class="hero__subtitle">All the teams and leagues you've saved</p>
     </section>
 
+    <section class="saved-controls">
+      <div class="saved-controls__row">
+        <input
+          type="text"
+          id="filter-input"
+          class="search-form__input"
+          placeholder="Filter favourites…"
+          aria-label="Filter saved items"
+        >
+        <button class="btn btn--danger" id="clear-all-btn" type="button">Clear All</button>
+      </div>
+      <p class="saved-controls__count" id="saved-count"></p>
+    </section>
+
+    <p id="empty-saved-msg" class="status-msg" hidden>
+      You haven't saved anything yet. <a href="index.html">Search for teams</a> and click ★ to save them.
+    </p>
+
+    <div class="card-grid" id="saved-grid"></div>
   </main>
 
-  <footer>
-    <!-- footer content -->
+  <footer class="footer">
+    <p class="footer__text">⚽ Football Scout · Data from <a href="https://www.thesportsdb.com/" target="_blank" rel="noopener">TheSportsDB</a></p>
   </footer>
 
   <script type="module" src="js/saved.js"></script>

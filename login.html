@@ -3,24 +3,137 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Login — Project Name</title>
+  <title>Football Scout — Profile</title>
   <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
+  <header class="header">
+    <nav class="nav">
+      <a href="index.html" class="nav__logo">⚽ Football Scout</a>
+      <div class="nav__links">
+        <a href="index.html" class="nav__link">Search</a>
+        <a href="saved.html" class="nav__link">Favourites</a>
+        <a href="login.html" class="nav__link nav__link--active">Profile</a>
+      </div>
+      <button class="nav__hamburger" id="hamburger-btn" aria-label="Toggle menu" type="button">
+        <span></span><span></span><span></span>
+      </button>
+    </nav>
+  </header>
 
-  <main>
+  <main class="main">
+    <section class="hero">
+      <h1 class="hero__title">Your Profile</h1>
+      <p class="hero__subtitle">Personalise your Football Scout experience</p>
+    </section>
 
-    <form id="login-form">
-      <!-- input type="text" with validation attributes -->
-      <label for="name-input">Your name</label>
-      <input id="name-input" type="text" name="name" required minlength="2" autocomplete="name">
+    <section class="profile-section">
+      <div class="profile-card">
+        <div class="profile-card__avatar" id="profile-avatar">⚽</div>
+        <h2 class="profile-card__name" id="profile-name-display">Guest</h2>
+        <p class="profile-card__meta" id="profile-meta">Not set up yet</p>
+      </div>
 
-      <p id="login-error" hidden></p>
+      <form id="profile-form" class="profile-form" novalidate>
+        <h3 class="profile-form__heading">Set Up Your Profile</h3>
 
-      <button type="submit">Start →</button>
-    </form>
+        <div class="profile-form__field">
+          <label for="display-name" class="profile-form__label">Display Name <span class="required">*</span></label>
+          <input
+            type="text"
+            id="display-name"
+            name="displayName"
+            class="profile-form__input"
+            placeholder="Your name"
+            minlength="2"
+            maxlength="30"
+            required
+          >
+        </div>
 
+        <div class="profile-form__field">
+          <label for="email" class="profile-form__label">Email</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            class="profile-form__input"
+            placeholder="you@example.com"
+          >
+        </div>
+
+        <div class="profile-form__field">
+          <label for="fav-league" class="profile-form__label">Favourite League</label>
+          <select id="fav-league" name="favLeague" class="profile-form__select">
+            <option value="">Select a league…</option>
+            <option value="Premier League">Premier League 🏴󠁧󠁢󠁥󠁮󠁧󠁿</option>
+            <option value="La Liga">La Liga 🇪🇸</option>
+            <option value="Bundesliga">Bundesliga 🇩🇪</option>
+            <option value="Serie A">Serie A 🇮🇹</option>
+            <option value="Ligue 1">Ligue 1 🇫🇷</option>
+            <option value="Champions League">Champions League 🏆</option>
+          </select>
+        </div>
+
+        <div class="profile-form__field">
+          <label class="profile-form__label">Notifications</label>
+          <div class="profile-form__checkboxes">
+            <label class="checkbox-label">
+              <input type="checkbox" name="notif-results" id="notif-results"> Match results
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="notif-transfers" id="notif-transfers"> Transfer news
+            </label>
+            <label class="checkbox-label">
+              <input type="checkbox" name="notif-new" id="notif-new"> New features
+            </label>
+          </div>
+        </div>
+
+        <div class="profile-form__field">
+          <label for="bio" class="profile-form__label">Bio</label>
+          <textarea
+            id="bio"
+            name="bio"
+            class="profile-form__textarea"
+            placeholder="Tell us about yourself as a football fan…"
+            maxlength="200"
+            rows="3"
+          ></textarea>
+          <span class="char-count" id="bio-count">0 / 200</span>
+        </div>
+
+        <div class="profile-form__actions">
+          <button type="submit" class="btn btn--primary">Save Profile</button>
+          <button type="button" class="btn btn--danger" id="reset-profile-btn">Reset</button>
+        </div>
+
+        <p class="profile-form__feedback" id="form-feedback" hidden></p>
+      </form>
+    </section>
+
+    <section class="stats-section">
+      <h3 class="stats-section__heading">Your Activity</h3>
+      <div class="stats-grid" id="stats-grid">
+        <div class="stat-card">
+          <span class="stat-card__number" id="stat-saved">0</span>
+          <span class="stat-card__label">Saved Items</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__number" id="stat-searches">0</span>
+          <span class="stat-card__label">Searches Made</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-card__number" id="stat-session">0</span>
+          <span class="stat-card__label">Added This Session</span>
+        </div>
+      </div>
+    </section>
   </main>
+
+  <footer class="footer">
+    <p class="footer__text">⚽ Football Scout · Data from <a href="https://www.thesportsdb.com/" target="_blank" rel="noopener">TheSportsDB</a></p>
+  </footer>
 
   <script type="module" src="js/login.js"></script>
 </body>
