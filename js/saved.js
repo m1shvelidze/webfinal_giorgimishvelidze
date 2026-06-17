@@ -1,48 +1,103 @@
-import { getSaved, setSaved } from './api.js';
+/**
+ * saved.js — entry point for saved.html (Favourites page)
+ *
+ * Demonstrates:
+ *  - reading/writing application state from localStorage
+ *  - dynamic card rendering
+ *  - filter/search via `input` event
+ *  - clear-all functionality
+ *  - state held in array of objects
+ */
 
-// redirect to login if no user session
-if (!localStorage.getItem('user')) {
-  window.location.href = 'login.html';
-}
+import { loadSaved, persistSaved } from './api.js';
+import { renderCards, setVisible, initMobileNav } from './ui.js';
 
-document.getElementById('nav-user').textContent = localStorage.getItem('user') || '';
+// ── DOM refs ──────────────────────────────────────────────
+const savedGrid    = document.getElementById('saved-grid');
+const emptyMsg     = document.getElementById('empty-saved-msg');
+const filterInput  = document.getElementById('filter-input');
+const clearAllBtn  = document.getElementById('clear-all-btn');
+const savedCount   = document.getElementById('saved-count');
 
-document.getElementById('logout-btn').addEventListener('click', () => {
-  localStorage.removeItem('user');
-  document.cookie = 'authorized=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/';
-  window.location.href = 'login.html';
+// ── Application state ─────────────────────────────────────
+/** @type {Array<Object>} All saved items (source of truth for this page) */
+let savedItems = [];
+
+// ── Init ──────────────────────────────────────────────────
+initMobileNav();
+loadAndRender();
+
+// ── Event listeners ───────────────────────────────────────
+
+// 1. Filter input
+filterInput.addEventListener('input', () => {
+  const q = filterInput.value.trim().toLowerCase();
+  const filtered = q
+    ? savedItems.filter(item =>
+        item.name.toLowerCase().includes(q) ||
+        item.country.toLowerCase().includes(q)
+      )
+    : savedItems;
+  renderSaved(filtered);
 });
 
-function renderSaved() {
-  const items = getSaved();
-  const grid = document.getElementById('saved-grid');
-  const empty = document.getElementById('saved-empty');
+// 2. Clear all button
+clearAllBtn.addEventListener('click', () => {
+  if (savedItems.length === 0) return;
+  if (!confirm('Remove all saved items?')) return;
+  savedItems = [];
+  persistSaved([]);
+  renderSaved([]);
+});
 
-  grid.innerHTML = '';
+// 3. Keydown on filter — clear on Escape
+filterInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') {
+    filterInput.value = '';
+    renderSaved(savedItems);
+  }
+});
 
-  if (!items.length) {
-    empty.hidden = false;
+// ── Functions ─────────────────────────────────────────────
+
+/** Load from localStorage then render. */
+function loadAndRender() {
+  savedItems = loadSaved();
+  renderSaved(savedItems);
+}
+
+/**
+ * Render the given items into the grid; handle empty state.
+ * @param {Array<Object>} items
+ */
+function renderSaved(items) {
+  const isEmpty = savedItems.length === 0;
+  setVisible(emptyMsg, isEmpty);
+
+  if (isEmpty) {
+    savedGrid.innerHTML = '';
+    savedCount.textContent = '';
     return;
   }
 
-  empty.hidden = true;
+  savedCount.textContent = `${items.length} of ${savedItems.length} saved item${savedItems.length !== 1 ? 's' : ''}`;
 
-  items.forEach(item => {
-    const card = document.createElement('article');
-    // build card content here
-
-    const removeBtn = document.createElement('button');
-    removeBtn.type = 'button';
-    removeBtn.textContent = 'Remove';
-    removeBtn.addEventListener('click', () => {
-      const updated = getSaved().filter(saved => saved.id !== item.id);
-      setSaved(updated);
-      renderSaved();
-    });
-
-    card.appendChild(removeBtn);
-    grid.appendChild(card);
-  });
+  renderCards(savedGrid, items, onSaveToggle);
 }
 
-renderSaved();
+/**
+ * When a card's save button is clicked on this page, remove it from state and re-render.
+ * @param {Object} item
+ * @param {Array} updatedSaved
+ */
+function onSaveToggle(item, updatedSaved) {
+  savedItems = updatedSaved;
+  const q = filterInput.value.trim().toLowerCase();
+  const filtered = q
+    ? savedItems.filter(i =>
+        i.name.toLowerCase().includes(q) ||
+        i.country.toLowerCase().includes(q)
+      )
+    : savedItems;
+  renderSaved(filtered);
+}
