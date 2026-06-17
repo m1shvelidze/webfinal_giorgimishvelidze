@@ -9,13 +9,27 @@ const BASE_URL = 'https://www.thesportsdb.com/api/v1/json/3';
 
 /**
  * Search for teams by name.
+ * Calls both searchteams.php (exact) and search_all_teams.php (keyword)
+ * then merges + deduplicates so partial terms like "real" return all Real* clubs.
  * @param {string} query
  * @returns {Promise<Array>}
  */
 export async function searchTeams(query) {
-  const url = `${BASE_URL}/searchteams.php?t=${encodeURIComponent(query)}`;
-  const data = await fetchJSON(url);
-  return data.teams ?? [];
+  const [exactData, allData] = await Promise.all([
+    fetchJSON(`${BASE_URL}/searchteams.php?t=${encodeURIComponent(query)}`),
+    fetchJSON(`${BASE_URL}/search_all_teams.php?t=${encodeURIComponent(query)}`),
+  ]);
+
+  const exact = Array.isArray(exactData.teams) ? exactData.teams : [];
+  const all   = Array.isArray(allData.teams)   ? allData.teams   : [];
+
+  // Merge and deduplicate by idTeam
+  const seen = new Set();
+  return [...exact, ...all].filter(t => {
+    if (seen.has(t.idTeam)) return false;
+    seen.add(t.idTeam);
+    return true;
+  });
 }
 
 /**
