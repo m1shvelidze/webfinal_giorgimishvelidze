@@ -41,6 +41,8 @@
 
   --nav-height: 64px;
   --transition: 0.2s ease;
+
+  --bg-overlay: rgba(244,246,248,.87);
 }
 
 /* ----- 1b. Dark Theme ----- */
@@ -57,6 +59,8 @@
   --color-border:      #2e3244;
   --color-text:        #e8eaf0;
   --color-text-muted:  #8b92a8;
+
+  --bg-overlay: rgba(10,12,18,.88);
 }
 
 /* Also respect OS preference when no manual toggle is set */
@@ -74,6 +78,8 @@
     --color-border:      #2e3244;
     --color-text:        #e8eaf0;
     --color-text-muted:  #8b92a8;
+
+    --bg-overlay: rgba(10,12,18,.88);
   }
 }
 
@@ -104,7 +110,13 @@ body {
   font-family: var(--font-base);
   font-size: var(--font-size-base);
   color: var(--color-text);
-  background: var(--color-bg);
+  background-color: var(--color-bg);
+  background-image:
+    linear-gradient(var(--bg-overlay), var(--bg-overlay)),
+    url('https://images.unsplash.com/photo-1489944440615-453fc2b6a9a9?w=1600&auto=format&fit=crop');
+  background-size: cover;
+  background-position: center top;
+  background-attachment: fixed;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
