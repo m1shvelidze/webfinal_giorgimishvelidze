@@ -15,6 +15,7 @@
         <a href="saved.html" class="nav__link nav__link--active">Favourites</a>
         <a href="login.html" class="nav__link">Profile</a>
       </div>
+      <button class="theme-toggle" id="theme-toggle-btn" aria-label="Toggle dark mode" type="button">🌙</button>
       <button class="nav__hamburger" id="hamburger-btn" aria-label="Toggle menu" type="button">
         <span></span><span></span><span></span>
       </button>
@@ -53,5 +54,25 @@
   </footer>
 
   <script type="module" src="js/saved.js"></script>
+  <script>
+    (function() {
+      const saved = localStorage.getItem('theme');
+      if (saved) document.documentElement.setAttribute('data-theme', saved);
+      const btn = document.getElementById('theme-toggle-btn');
+      function updateBtn() {
+        const dark = document.documentElement.getAttribute('data-theme') === 'dark';
+        btn.textContent = dark ? '☀️' : '🌙';
+        btn.setAttribute('aria-label', dark ? 'Switch to light mode' : 'Switch to dark mode');
+      }
+      updateBtn();
+      btn.addEventListener('click', function() {
+        const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+        const next = isDark ? 'light' : 'dark';
+        document.documentElement.setAttribute('data-theme', next);
+        localStorage.setItem('theme', next);
+        updateBtn();
+      });
+    })();
+  </script>
 </body>
 </html>

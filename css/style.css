@@ -43,6 +43,58 @@
   --transition: 0.2s ease;
 }
 
+/* ----- 1b. Dark Theme ----- */
+[data-theme="dark"] {
+  --color-primary:     #2ecc71;
+  --color-primary-dk:  #27ae60;
+  --color-primary-lt:  #1a3d2b;
+  --color-accent:      #f5a623;
+  --color-accent-dk:   #d4891a;
+  --color-danger:      #e74c3c;
+  --color-danger-lt:   #2d1a18;
+  --color-bg:          #0f1117;
+  --color-surface:     #1a1d27;
+  --color-border:      #2e3244;
+  --color-text:        #e8eaf0;
+  --color-text-muted:  #8b92a8;
+}
+
+/* Also respect OS preference when no manual toggle is set */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-primary:     #2ecc71;
+    --color-primary-dk:  #27ae60;
+    --color-primary-lt:  #1a3d2b;
+    --color-accent:      #f5a623;
+    --color-accent-dk:   #d4891a;
+    --color-danger:      #e74c3c;
+    --color-danger-lt:   #2d1a18;
+    --color-bg:          #0f1117;
+    --color-surface:     #1a1d27;
+    --color-border:      #2e3244;
+    --color-text:        #e8eaf0;
+    --color-text-muted:  #8b92a8;
+  }
+}
+
+/* ----- 1c. Dark Mode Toggle Button ----- */
+.theme-toggle {
+  background: rgba(255,255,255,.15);
+  border: 1px solid rgba(255,255,255,.25);
+  color: #fff;
+  border-radius: var(--radius-sm);
+  padding: 6px 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background var(--transition);
+  line-height: 1;
+  flex-shrink: 0;
+}
+
+.theme-toggle:hover {
+  background: rgba(255,255,255,.28);
+}
+
 /* ----- 2. Reset & Base ----- */
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
