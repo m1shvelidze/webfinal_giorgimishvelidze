@@ -16,8 +16,9 @@
 import {
   searchTeams,
   searchLeagues,
+  getLeaguesByCountry,
+  getTeamsByLeague,
   incrementSearchCount,
-  loadSaved,
 } from './api.js';
 
 import {
@@ -57,11 +58,34 @@ searchInput.addEventListener('input', () => {
   setVisible(formError, false);
 });
 
-// 3. Country select change — trigger re-search if there's already a query
+// 3. Country select change — browse by country if no query, re-filter if query exists
 countrySelect.addEventListener('change', () => {
-  if (searchInput.value.trim().length >= 2) {
-    form.dispatchEvent(new Event('submit', { cancelable: true }));
+  const country = countrySelect.value;
+  const query   = searchInput.value.trim();
+
+  if (country && query.length < 2) {
+    // No search query — browse this country's teams/leagues directly
+    browseByCountry(country);
+  } else if (query.length >= 2) {
+    // Query exists — re-run search with the new country filter
+    performSearch(query);
+  } else {
+    // Nothing selected and no query — reset
+    clearResults();
   }
+});
+
+// 3b. Search-type radio change — re-run current mode if something is already showing
+document.querySelectorAll('input[name="search-type"]').forEach(radio => {
+  radio.addEventListener('change', () => {
+    const country = countrySelect.value;
+    const query   = searchInput.value.trim();
+    if (country && query.length < 2) {
+      browseByCountry(country);
+    } else if (query.length >= 2) {
+      performSearch(query);
+    }
+  });
 });
 
 // 4. Keydown on input — clear on Escape
@@ -154,9 +178,9 @@ async function performSearch(query) {
       raw = await searchLeagues(query);
     }
 
-    // Normalise
+    // Normalise — filter to Soccer only (API returns all sports)
     results = searchType === 'teams'
-      ? raw.map(normaliseTeam)
+      ? raw.filter(t => t.strSport === 'Soccer').map(normaliseTeam)
       : raw.map(normaliseLeague);
 
     // Filter by country if selected
@@ -179,18 +203,63 @@ async function performSearch(query) {
 }
 
 /**
+ * Browse teams or leagues for a country without a search query.
+ * For teams: fetches soccer leagues in the country, then loads the first league's teams.
+ * For leagues: fetches all soccer leagues in the country directly.
+ * @param {string} country
+ */
+async function browseByCountry(country) {
+  const searchType = getSelectedSearchType();
+
+  showLoading(true);
+  hideMessages();
+
+  try {
+    if (searchType === 'leagues') {
+      const raw = await getLeaguesByCountry(country);
+      results = raw.map(normaliseLeague);
+      renderResults(`${country} leagues`, results);
+    } else {
+      // Step 1: get soccer leagues for this country
+      const leagues = await getLeaguesByCountry(country);
+
+      if (leagues.length === 0) {
+        results = [];
+        renderResults(country, results);
+        return;
+      }
+
+      // Step 2: load teams from the first (most prominent) league found
+      const mainLeague = leagues[0].strLeague;
+      const raw = await getTeamsByLeague(mainLeague);
+      results = raw
+        .filter(t => t.strSport === 'Soccer')
+        .map(normaliseTeam);
+
+      renderResults(`${mainLeague} teams`, results);
+    }
+
+    incrementSearchCount();
+  } catch (err) {
+    showError(`Could not load ${country}: ${err.message}. Check your connection and try again.`);
+  } finally {
+    showLoading(false);
+  }
+}
+
+/**
  * Render results into the grid; handle empty state.
- * @param {string} query
+ * @param {string} label  — display label for the results heading
  * @param {Array<Object>} items
  */
-function renderResults(query, items) {
+function renderResults(label, items) {
   if (items.length === 0) {
     setVisible(emptyMsg, true);
     setVisible(resultsSection, false);
     return;
   }
 
-  resultsTitle.textContent = `${items.length} result${items.length !== 1 ? 's' : ''} for "${query}"`;
+  resultsTitle.textContent = `${items.length} result${items.length !== 1 ? 's' : ''} for "${label}"`;
   setVisible(resultsSection, true);
 
   renderCards(resultsGrid, items, onSaveToggle);

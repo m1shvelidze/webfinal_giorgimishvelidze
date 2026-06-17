@@ -63,6 +63,9 @@ a:hover { text-decoration: underline; }
 
 img { max-width: 100%; display: block; }
 
+/* Prevent any display: rule from overriding the hidden attribute */
+[hidden] { display: none !important; }
+
 /* ----- 3. Header / Nav ----- */
 .header {
   background: var(--color-primary);

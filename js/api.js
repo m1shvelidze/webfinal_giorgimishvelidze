@@ -30,6 +30,17 @@ export async function searchLeagues(query) {
 }
 
 /**
+ * Get all soccer leagues for a given country.
+ * @param {string} country
+ * @returns {Promise<Array>}
+ */
+export async function getLeaguesByCountry(country) {
+  const url = `${BASE_URL}/search_all_leagues.php?c=${encodeURIComponent(country)}&s=Soccer`;
+  const data = await fetchJSON(url);
+  return data.countrys ?? [];
+}
+
+/**
  * Get all teams in a league by league name.
  * @param {string} leagueName
  * @returns {Promise<Array>}
